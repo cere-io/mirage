@@ -116,7 +116,8 @@ UrlShare.prototype.compress = function(jsonInput, cb) {
     JSONURL.compress(packed, 9, function(res, error) {
       try {
         var result = SafeEncode.buffer(res);
-        cb(null, SafeEncode.encode(result));
+        var cipherText = SafeEncode.encode(result);
+        cb(null, cipherText);
       } catch (e) {
         cb(e);
       }

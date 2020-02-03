@@ -131,7 +131,7 @@ export class AppComponent implements OnInit, OnChanges {
         this.EsSpecific();
       }
       if (config && config === "learn") {
-        $("#learnModal").modal("show");
+        // $("#learnModal").modal("show");
         this.initial_connect = true;
       } else {
         if (config && config.url && config.appname) {
@@ -151,10 +151,10 @@ export class AppComponent implements OnInit, OnChanges {
   detectConfig(cb) {
     let config = null;
     let isDefault =
-      window.location.href.indexOf("#?default=true") > -1 ? true : false;
+      window.location.href.indexOf("#?default=true") > -1;
     let isInputState =
-      window.location.href.indexOf("input_state=") > -1 ? true : false;
-    let isApp = window.location.href.indexOf("app=") > -1 ? true : false;
+      window.location.href.indexOf("input_state=") > -1;
+    let isApp = window.location.href.indexOf("app=") > -1;
     if (isDefault) {
       config = this.defaultApp;
       return cb(config);

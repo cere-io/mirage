@@ -1,5 +1,7 @@
 import { Component, OnInit, Input, Output, EventEmitter } from "@angular/core";
 import { AppbaseService } from "../shared/appbase.service";
+import { UrlShare } from "../shared/urlShare";
+
 declare var $;
 
 @Component({
@@ -113,6 +115,26 @@ export class JsonEditorComponent implements OnInit {
       };
       this.errorShow.emit(obj);
     }
+  }
+
+  saveQuery() {
+    const urlShare = new UrlShare();
+    var esQuery = this.editorHookHelp.getValue();
+    var urlQueryParams = urlShare.getQueryParameters(); // Get query param
+
+    this.appbaseService
+      .posturl('http://localhost:2006/event/events/save-query-params', {
+        query: JSON.parse(esQuery),
+        state: urlQueryParams.input_state,
+      })
+      .then(function (res) {
+        console.log('Response: ', res);
+
+        alert('Query successfully saved with name: ' + res.json().name);
+      })
+      .catch(function (error) {
+        console.error(error);
+      });
   }
 
   setStream(validate) {
