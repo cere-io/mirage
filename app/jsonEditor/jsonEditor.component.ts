@@ -123,14 +123,15 @@ export class JsonEditorComponent implements OnInit {
     var urlQueryParams = urlShare.getQueryParameters(); // Get query param
 
     this.appbaseService
-      .posturl('http://localhost:2006/event/events/save-query-params', {
+      .posturl('http://localhost:3015/EE/admin/engagement-enrich/index.php?action=save-query-data', {
+        id: urlQueryParams.id,
         query: JSON.parse(esQuery),
         state: urlQueryParams.input_state,
       })
       .then(function (res) {
         console.log('Response: ', res);
 
-        alert('Query successfully saved with name: ' + res.json().name);
+        alert('Query successfully saved to ES.');
       })
       .catch(function (error) {
         console.error(error);
