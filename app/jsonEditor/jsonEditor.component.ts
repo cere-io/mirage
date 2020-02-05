@@ -122,8 +122,15 @@ export class JsonEditorComponent implements OnInit {
     var esQuery = this.editorHookHelp.getValue();
     var urlQueryParams = urlShare.getQueryParameters(); // Get query param
 
+    var url = '';
+    if (window.location.hostname === 'localhost') {
+      url = 'http://localhost:3015';
+    } else {
+      url = 'https://rms.stage.cere.io';
+    }
+
     this.appbaseService
-      .posturl('http://localhost:3015/EE/admin/engagement-enrich/index.php?action=save-query-data', {
+      .posturl(url + '/EE/admin/engagement-enrich/index.php?action=save-query-data', {
         id: urlQueryParams.id,
         query: JSON.parse(esQuery),
         state: urlQueryParams.input_state,
