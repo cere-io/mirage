@@ -122,16 +122,17 @@ export class JsonEditorComponent implements OnInit {
     var esQuery = this.editorHookHelp.getValue();
     var urlQueryParams = urlShare.getQueryParameters(); // Get query param
 
-    var url = '';
-    if (window.location.hostname === 'localhost') {
-      url = 'http://localhost:3015';
-    } else {
-      url = 'https://rms.stage.cere.io';
+    console.log('Query params: ', urlQueryParams);
+
+    if (!urlQueryParams.save_to) {
+      alert("Can't save the query, because `save_to` parameter was not provided.");
+
+      return;
     }
 
     this.appbaseService
-      .posturl(url + '/EE/admin/engagement-enrich/index.php?action=save-query-data', {
-        id: urlQueryParams.id,
+      .puturl(urlQueryParams.save_to + `/EE/runtime/RequestHandler.php?controller=RuntimeEngagementEventQuery&action=update&async=true&id=${urlQueryParams.id}`, {
+        name: urlQueryParams.name,
         query: JSON.parse(esQuery),
         state: urlQueryParams.input_state,
       })
