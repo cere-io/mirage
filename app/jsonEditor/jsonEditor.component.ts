@@ -133,6 +133,7 @@ export class JsonEditorComponent implements OnInit {
     this.appbaseService
       .puturl(urlQueryParams.save_to + `/EE/runtime/RequestHandler.php?controller=RuntimeEngagementEventQueryController&action=update&async=true&id=${urlQueryParams.id}`, {
         name: urlQueryParams.name,
+        index_name: urlQueryParams.index_name,
         query: JSON.parse(esQuery),
         state: urlQueryParams.input_state,
       })
