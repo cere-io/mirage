@@ -52,10 +52,10 @@ a {
 
 .btn-primary {
   color: #fff;
-  background-color: #FCC829;
-  border-color: #fcc210; }
+  background-color: #3f51b5;
+  border-color: #3849a2; }
   .btn-primary:hover, .btn-primary:focus, .btn-primary.active {
-    background-color: #fcc210; }
+    background-color: #3849a2; }
 
 .btn-grey {
   color: #828282;
@@ -67,12 +67,12 @@ a {
 
 .btn-theme {
   color: #fff;
-  background-color: #FCC829;
-  border-color: #FFAF3B; }
+  background-color: #3f51b5;
+  border-color: #4a5edf; }
   .btn-theme:hover {
     color: #fff;
-    background-color: #FFAF3B;
-    border-color: #FFAF3B; }
+    background-color: #4a5edf;
+    border-color: #4a5edf; }
 
 .btn {
   border-radius: 0;
