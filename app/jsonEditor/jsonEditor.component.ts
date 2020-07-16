@@ -136,6 +136,7 @@ export class JsonEditorComponent implements OnInit {
         index_name: urlQueryParams.index_name,
         query: JSON.parse(esQuery),
         state: urlQueryParams.input_state,
+        rules: JSON.parse(urlQueryParams.rules),
       })
       .then(function (res) {
         console.log('Response: ', res);
