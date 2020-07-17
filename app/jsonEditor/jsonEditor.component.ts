@@ -145,6 +145,7 @@ export class JsonEditorComponent implements OnInit {
       })
       .catch(function (error) {
         console.error(error);
+        alert('Error while saving query to ES.');
       });
   }
 
