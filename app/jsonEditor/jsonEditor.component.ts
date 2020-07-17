@@ -140,6 +140,8 @@ export class JsonEditorComponent implements OnInit {
       })
       .then(function (res) {
         console.log('Response: ', res);
+        const targetWindow = window.parent;
+        targetWindow.postMessage({type: 'query.saved', payload:urlQueryParams.id}, "*");
 
         alert('Query successfully saved to ES.');
       })
