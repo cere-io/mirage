@@ -136,14 +136,18 @@ export class JsonEditorComponent implements OnInit {
         index_name: urlQueryParams.index_name,
         query: JSON.parse(esQuery),
         state: urlQueryParams.input_state,
+        rules: JSON.parse(urlQueryParams.rules),
       })
       .then(function (res) {
         console.log('Response: ', res);
+        const targetWindow = window.parent;
+        targetWindow.postMessage({type: 'query.saved', payload:urlQueryParams.id}, "*");
 
         alert('Query successfully saved to ES.');
       })
       .catch(function (error) {
         console.error(error);
+        alert('Error while saving query to ES.');
       });
   }
 
