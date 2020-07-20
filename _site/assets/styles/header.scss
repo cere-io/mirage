@@ -1,0 +1,162 @@
+@import "variables.scss";
+.init-ES,
+footer {
+	position: absolute;
+	top: 0px;
+	left: 0;
+	width: 100%;
+	z-index: 6;
+	background: $grey-bg;
+	padding: 5px;
+	padding-left: 165px;
+	padding-right: 130px;
+	border-bottom: 1px solid darken($grey-bg, 10%);
+	.action-btns {
+		position: absolute;
+		left: 5px;
+		display: inline-block;
+		.share-btn {
+			padding: 9px 12px;
+		}
+		.link {
+			padding-left: 10px;
+		}
+	}
+	.submit-btn {
+		position: absolute;
+		right: 5px;
+		width: 125px;
+	}
+}
+.init-ES {
+	padding: 15px 130px 15px 165px;
+    border-bottom: 1px solid #dedede;
+    margin: 0;
+}
+.share_content {
+	.share_content {
+		display: none;
+	}
+}
+.url-container {
+	position: relative;
+	.hide-url {
+		position: absolute;
+		width: auto;
+		right: 0;
+		top: 0;
+		z-index: 2;
+		height: 100%;
+		display: block;
+		text-align: right;
+		border-radius: 4px;
+		background: $grey-bg;
+		border-bottom: 2px dashed #ccc;
+		.btn {
+			margin-top: -1px;
+			padding: 9px 12px;
+		}
+		&.expand {
+			width: 100%;
+		}
+	}
+}
+.header {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	z-index: 9;
+	background: $grey-bg;
+	border-bottom: 0;
+	padding: 0;
+	max-height: 100px;
+	margin: 0 auto;
+	position: absolute;
+    height: auto;
+    background: #fff;
+    border-bottom: 2px solid #ccc;
+    height: 88px;
+	.img-container {
+		margin-top: 10px;
+		margin-bottom: 10px;
+		img {
+			max-width: 200px;
+			margin: 15px auto;
+		}
+	}
+	.tag-line {
+		line-height: 22px;
+		font-size: 20px;
+		margin-bottom: 10px;
+		font-weight: lighter;
+	}
+	.subscribe {
+		position: absolute;
+		right: 15px;
+	    top: 15px;
+	    width: 50px;
+	    height: 50px;
+	    line-height: 50px;
+	    font-size: 24px;
+	    color: $primary-font-color;
+	    img {
+	    	border-radius: 50%;
+	    }
+	}
+	@media screen and (max-width: 768px) {
+		.tag-line {
+			line-height: 16px;
+			font-size: 14px;
+		}
+	}
+	@media screen and (max-width: 500px) { 
+		.header-container {
+			height: 30px;
+			.tag-line {
+				display: none;
+			}
+		}
+	}
+}
+#subscribeModal {
+	.modal-content {
+		padding-bottom: 45px;
+		.single-option {
+			text-align: left;
+			margin-bottom: 5px;
+		}
+	}
+}
+footer {
+	position: absolute;
+	bottom: 0;
+	top: auto;
+	padding-right: 5px;
+	border-top: 1px solid #ddd;
+	border-bottom: 0;
+	z-index: 99999999;
+	height: 36px;
+	padding-left: 5px;
+	.powered_by {
+		position: absolute;
+		right: 5px;
+	}
+	.github-star {
+		position: absolute;
+		left: 5px;
+	}
+	@media screen and (max-width: 768px) {
+		height: 56px;
+		.powered_by, .github-star, .footer-center  {
+			font-size: 11px;
+			line-height: 23px;
+		}
+		.footer-center
+		{
+			position: relative;
+		    display: block;
+		    width: 100%;
+		}
+	}
+}
