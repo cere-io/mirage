@@ -122,7 +122,16 @@ export class AppComponent implements OnInit, OnChanges {
       ? true
       : false;
     // get data from url
-    this.detectConfig(configCb.bind(this));
+    const index_name = this.queryParams.index_name;
+    const current = {
+      id: this.queryParams.id,
+      index_name,
+      save_to: this.queryParams.save_to,
+      rules: JSON.parse(this.queryParams.rules),
+      name: this.queryParams.name,
+    };
+    this.storageService.set('currentquery', JSON.stringify(current));
+    this.detectConfig(configCb.bind(this), index_name);
     function configCb(config) {
       this.setInitialValue();
       this.getQueryList();
@@ -148,15 +157,16 @@ export class AppComponent implements OnInit, OnChanges {
   }
 
   // detect app config, either get it from url or apply default config
-  detectConfig(cb) {
+  detectConfig(cb, index_name) {
     let config = null;
     let isDefault =
       window.location.href.indexOf("#?default=true") > -1;
     let isInputState =
       window.location.href.indexOf("input_state=") > -1;
     let isApp = window.location.href.indexOf("app=") > -1;
-    if (isDefault) {
+    if (!isInputState && !!index_name) {
       config = this.defaultApp;
+      config.appname = index_name;
       return cb(config);
     } else if (!isInputState && !isApp) {
       return cb("learn");

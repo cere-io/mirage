@@ -1,5 +1,6 @@
 import { Component, OnInit, Input, Output, EventEmitter } from "@angular/core";
 import { AppbaseService } from "../shared/appbase.service";
+import { StorageService } from "../shared/storage.service";
 import { UrlShare } from "../shared/urlShare";
 
 declare var $;
@@ -14,7 +15,7 @@ declare var $;
     "setProp",
     "errorShow"
   ],
-  providers: [AppbaseService]
+  providers: [AppbaseService, StorageService]
 })
 export class JsonEditorComponent implements OnInit {
   public config;
@@ -35,7 +36,7 @@ export class JsonEditorComponent implements OnInit {
   @Output() errorShow = new EventEmitter();
   @Input() allowF: any;
 
-  constructor(public appbaseService: AppbaseService) {}
+  constructor(public appbaseService: AppbaseService, public storageService: StorageService) {}
 
   // Set codemirror instead of normal textarea
   ngOnInit() {
@@ -118,30 +119,31 @@ export class JsonEditorComponent implements OnInit {
   }
 
   saveQuery() {
+    const currentQuery = JSON.parse(this.storageService.get("currentquery"));
     const urlShare = new UrlShare();
     var esQuery = this.editorHookHelp.getValue();
     var urlQueryParams = urlShare.getQueryParameters(); // Get query param
 
     console.log('Query params: ', urlQueryParams);
 
-    if (!urlQueryParams.save_to) {
+    if (!currentQuery.save_to) {
       alert("Can't save the query, because `save_to` parameter was not provided.");
 
       return;
     }
 
     this.appbaseService
-      .puturl(urlQueryParams.save_to + `/EE/runtime/RequestHandler.php?controller=RuntimeEngagementEventQueryController&action=update&async=true&id=${urlQueryParams.id}`, {
-        name: urlQueryParams.name,
-        index_name: urlQueryParams.index_name,
+      .puturl(currentQuery.save_to + `/EE/runtime/RequestHandler.php?controller=RuntimeEngagementEventQueryController&action=update&async=true&id=${currentQuery.id}`, {
+        name: currentQuery.name,
+        index_name: currentQuery.index_name,
         query: JSON.parse(esQuery),
         state: urlQueryParams.input_state,
-        rules: JSON.parse(urlQueryParams.rules),
+        rules: currentQuery.rules,
       })
       .then(function (res) {
         console.log('Response: ', res);
         const targetWindow = window.parent;
-        targetWindow.postMessage({type: 'query.saved', payload:urlQueryParams.id}, "*");
+        targetWindow.postMessage({type: 'query.saved', payload:currentQuery.id}, "*");
 
         alert('Query successfully saved to ES.');
       })
