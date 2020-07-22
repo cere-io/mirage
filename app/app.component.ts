@@ -123,15 +123,17 @@ export class AppComponent implements OnInit, OnChanges {
       : false;
     // get data from url
     const index_name = this.queryParams.index_name;
+    const save_to = this.queryParams.save_to;
+
     const current = {
       id: this.queryParams.id,
       index_name,
-      save_to: this.queryParams.save_to,
+      save_to: save_to,
       rules: JSON.parse(this.queryParams.rules),
       name: this.queryParams.name,
     };
     this.storageService.set('currentquery', JSON.stringify(current));
-    this.detectConfig(configCb.bind(this), index_name);
+    this.detectConfig(configCb.bind(this), index_name, save_to);
     function configCb(config) {
       this.setInitialValue();
       this.getQueryList();
@@ -157,7 +159,7 @@ export class AppComponent implements OnInit, OnChanges {
   }
 
   // detect app config, either get it from url or apply default config
-  detectConfig(cb, index_name) {
+  detectConfig(cb, index_name, save_to) {
     let config = null;
     let isDefault =
       window.location.href.indexOf("#?default=true") > -1;
@@ -166,7 +168,11 @@ export class AppComponent implements OnInit, OnChanges {
     let isApp = window.location.href.indexOf("app=") > -1;
     if (!isInputState && !!index_name) {
       config = this.defaultApp;
-      config.appname = index_name;
+      config = {
+        url: save_to + '/EE/admin/proxy_elastic_search.php?esUrl=',
+        appname: index_name,
+        save_to: save_to,
+      }
       return cb(config);
     } else if (!isInputState && !isApp) {
       return cb("learn");
@@ -174,6 +180,8 @@ export class AppComponent implements OnInit, OnChanges {
       this.urlShare.decryptUrl().then(data => {
         var decryptedData = data.data;
         if (decryptedData && decryptedData.config) {
+          decryptedData.config.url = save_to + '/EE/admin/proxy_elastic_search.php?esUrl=';
+          decryptedData.config.save_to = save_to;
           cb(decryptedData.config);
         } else {
           cb(null);
@@ -341,7 +349,7 @@ export class AppComponent implements OnInit, OnChanges {
     var self = this;
     var APPNAME = this.config.appname;
     var URL = trimUrl(this.config.url);
-    this.config.url = trimUrl(this.config.url);
+    this.config.url = URL;
     var filteredConfig = this.appbaseService.filterurl(URL);
     console.log(this.config, filteredConfig);
     if (!filteredConfig) {
