@@ -22,6 +22,8 @@ const defaultQuery = {
   }
 };
 
+const proxyUrl = '/EE/admin/proxy_elastic_search.php?esUrl=';
+
 declare var $: any;
 
 @Component({
@@ -169,7 +171,7 @@ export class AppComponent implements OnInit, OnChanges {
     if (!isInputState && !!index_name) {
       config = this.defaultApp;
       config = {
-        url: save_to + '/EE/admin/proxy_elastic_search.php?esUrl=',
+        url: save_to + proxyUrl,
         appname: index_name,
         save_to: save_to,
       }
@@ -180,7 +182,7 @@ export class AppComponent implements OnInit, OnChanges {
       this.urlShare.decryptUrl().then(data => {
         var decryptedData = data.data;
         if (decryptedData && decryptedData.config) {
-          decryptedData.config.url = save_to + '/EE/admin/proxy_elastic_search.php?esUrl=';
+          decryptedData.config.url = save_to + proxyUrl;
           decryptedData.config.save_to = save_to;
           cb(decryptedData.config);
         } else {
@@ -401,6 +403,10 @@ export class AppComponent implements OnInit, OnChanges {
       });
   }
 
+  proxyFinalUrl() {
+    return this.config.host + proxyUrl + '/' + this.config.appname;
+  }
+
   // get mappings
   getMappings(clearFlag) {
     var self = this;
@@ -411,7 +417,7 @@ export class AppComponent implements OnInit, OnChanges {
           self.config.host === "https://scalr.api.appbase.io" ? true : false;
         self.connected = true;
         self.setInitialValue();
-        self.finalUrl = self.config.host + "/" + self.config.appname;
+        self.finalUrl = self.proxyFinalUrl();
         self.mapping = data;
         self.types = self.seprateType(data);
         self.setLocalConfig(self.config.url, self.config.appname);
@@ -437,9 +443,10 @@ export class AppComponent implements OnInit, OnChanges {
           if (decryptedData.result) {
             self.result = decryptedData.result;
           }
+          /*
           if (decryptedData.finalUrl) {
             self.finalUrl = decryptedData.finalUrl;
-          }
+          }*/
         }
 
         //set input state
@@ -507,7 +514,7 @@ export class AppComponent implements OnInit, OnChanges {
         this.appbaseService.get("/_mapping").then(
           function(res) {
             let data = res.json();
-            this.finalUrl = this.config.host + "/" + this.config.appname;
+            this.finalUrl = this.proxyFinalUrl();
             this.setInitialValue();
             this.connected = true;
             this.result = query.result;
