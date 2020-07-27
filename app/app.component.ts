@@ -370,10 +370,10 @@ export class AppComponent implements OnInit, OnChanges {
   getVersion() {
     var self = this;
     this.appbaseService
-      .getVersion()
-      .then(function(res) {
+      .getVersion(self.config)
+      .then(function(res: any) {
         try {
-          let data = res.json();
+          let data = res.json;
           let source = data && data[self.config.appname];
           if (
             source &&

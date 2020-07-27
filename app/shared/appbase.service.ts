@@ -166,7 +166,7 @@ export class AppbaseService {
       return self.http.get(request_path, { headers: headers }).toPromise();
     }
   }
-  getVersion() {
+  getVersion(config) {
     let headersObj: any = {
       "Content-Type": "application/json;charset=UTF-8"
     };
@@ -180,9 +180,9 @@ export class AppbaseService {
       this.config.username + ":" + this.config.password + "@",
       ""
     );
-    var request_path = request_url + "/_settings";
+    var request_path = `/${config.appname}/_settings`;
     console.log(request_path);
-    return this.http.get(request_path, { headers: headers }).toPromise();
+    return esRequest('GET', request_path);
   }
   post(path: string, data: any) {
     let requestData = JSON.stringify(data);
