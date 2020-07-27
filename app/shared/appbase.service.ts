@@ -1,6 +1,7 @@
 import { Injectable } from "@angular/core";
 import { Headers, Http } from "@angular/http";
 import "rxjs/add/operator/toPromise";
+import { esRequest } from "./proxyapi.service";
 declare var Appbase;
 
 function parse_url(url: string) {
@@ -56,6 +57,7 @@ export class AppbaseService {
   }
 
   setAppbase(config: any) {
+    this.config.appname = config.appname;
     var parsedUrl = parse_url(config.url);
     this.config.username = parsedUrl.username;
     this.config.password = parsedUrl.password;
@@ -101,12 +103,12 @@ export class AppbaseService {
   getMappings() {
     var self = this;
     return new Promise((resolve, reject) => {
-      getRequest("/_mapping")
-        .then(function(res) {
-          let mappingData = res.json();
-          getRequest("/_alias")
-            .then(function(res) {
-              let aliasData = res.json();
+      esRequest('GET', `/${self.config.appname}/_mapping`)
+        .then(function(res: any) {
+          let mappingData = res.json;
+          esRequest('GET', `/${self.config.appname}/_alias`)
+            .then(function(res: any) {
+              let aliasData = res.json;
               for (let index in aliasData) {
                 for (let alias in aliasData[index].aliases) {
                   mappingData[alias] = mappingData[index];

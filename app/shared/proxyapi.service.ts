@@ -1,18 +1,17 @@
 const targetWindow = window.parent;
 
-export function getRequest2(esUrl:string) {
+export function esRequest(method:string, esUrl:string) {
   const msg = {
     rid: (new Date()).getTime(),
     type: 'es.api.request',
     esUrl,
-    method: 'GET',
-    timestamp: new Date(),
+    method,
   }
 
   return new Promise((resolve, reject) => {
     const resolver = (e) => {
       const {data, type} = e;
-      //debugger;
+      console.log('response', data);
       if(type === 'message' && data.type === 'es.api.response' && msg.rid === data.rid) {
         resolve({json: data.json});
       }
