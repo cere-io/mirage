@@ -1,9 +1,10 @@
-export function esRequest(method:string, esUrl:string) {
+export function esRequest(method:string, esUrl:string, payload) {
   const msg = {
     rid: (new Date()).getTime(),
     type: 'es.api.request',
     esUrl,
     method,
+    payload,
   }
 
   return new Promise((resolve, reject) => {

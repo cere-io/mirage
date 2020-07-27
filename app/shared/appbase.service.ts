@@ -182,7 +182,7 @@ export class AppbaseService {
     );
     var request_path = `/${config.appname}/_settings`;
     console.log(request_path);
-    return esRequest('GET', request_path);
+    return esRequest('GET', request_path, undefined);
   }
   post(path: string, data: any) {
     let requestData = JSON.stringify(data);
@@ -201,18 +201,10 @@ export class AppbaseService {
       })
       .toPromise();
   }
-  posturl(url: string, data: any) {
+  sendquery(appname, data: any) {
     let requestData = JSON.stringify(data);
-    let headersObj: any = {
-      "Content-Type": "application/json;charset=UTF-8"
-    };
-
-    if (this.requestParam.auth) {
-      headersObj.Authorization = this.requestParam.auth;
-    }
-
-    let headers = new Headers(headersObj);
-    return this.http.post(url, requestData, { headers: headers }).toPromise();
+    var request_path = `/${appname}/_doc/_search`;
+    return esRequest('POST', request_path, requestData);
   }
   put(path: string, data: any) {
     let headersObj: any = {

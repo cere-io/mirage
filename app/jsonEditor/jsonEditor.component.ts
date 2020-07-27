@@ -74,12 +74,12 @@ export class JsonEditorComponent implements OnInit {
     if (validate.flag) {
       $("#resultModal").modal("show");
       this.appbaseService
-        .posturl(self.finalUrl, validate.payload)
-        .then(function(res) {
+        .sendquery(this.config.appname, validate.payload)
+        .then(function(res: any) {
           self.result.isWatching = false;
           var propInfo = {
             name: "result_time_taken",
-            value: res.json().took
+            value: res.json.took
           };
           self.setProp.emit(propInfo);
           var propInfo1 = {
@@ -87,7 +87,7 @@ export class JsonEditorComponent implements OnInit {
             value: Math.random()
           };
           self.setProp.emit(propInfo1);
-          self.result.output = JSON.stringify(res.json(), null, 2);
+          self.result.output = JSON.stringify(res.json, null, 2);
           if ($("#resultModal").hasClass("in")) {
             self.responseHookHelp.setValue(self.result.output);
           } else {
