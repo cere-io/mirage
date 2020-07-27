@@ -470,9 +470,10 @@ export class AppComponent implements OnInit, OnChanges {
       .catch(function(e) {
         console.log(e);
         self.initial_connect = true;
+        const message = typeof(e) === 'string' ? e : e.message;
         self.errorShow({
-          title: "Authentication Error",
-          message: `It looks like your app name, username, password combination doesn\'t match. Check your url and appname and then connect it again.`
+          title: "Error",
+          message,
         });
       });
   }

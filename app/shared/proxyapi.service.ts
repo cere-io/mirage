@@ -20,6 +20,13 @@ export function esRequest(method:string, esUrl:string) {
       }
     }
 
+    const timeout = () => {
+      window.removeEventListener('message', resolver, false);
+      reject('timeout');
+    }
+
+    setTimeout(timeout, 30000);
+
     window.addEventListener('message', resolver, false);
     window.parent.postMessage(msg, "*");
   });
