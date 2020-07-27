@@ -1,5 +1,3 @@
-const targetWindow = window.parent;
-
 export function esRequest(method:string, esUrl:string) {
   const msg = {
     rid: (new Date()).getTime(),
@@ -13,6 +11,7 @@ export function esRequest(method:string, esUrl:string) {
       const {data, type} = e;
       console.log('response', data);
       if(type === 'message' && data.type === 'es.api.response' && msg.rid === data.rid) {
+        window.removeEventListener('message', resolver, false);
         resolve({json: data.json});
       }
     }
@@ -20,7 +19,7 @@ export function esRequest(method:string, esUrl:string) {
     window.addEventListener('message', resolver, false);
     
     //reject('timeout');
-    targetWindow.postMessage(msg, "*");
+    window.parent.postMessage(msg, "*");
   });
 
 }
