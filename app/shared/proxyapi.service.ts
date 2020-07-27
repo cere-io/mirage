@@ -12,13 +12,15 @@ export function esRequest(method:string, esUrl:string) {
       console.log('response', data);
       if(type === 'message' && data.type === 'es.api.response' && msg.rid === data.rid) {
         window.removeEventListener('message', resolver, false);
-        resolve({json: data.json});
+        if(data.error) {
+          reject(data.error);
+        } else {
+          resolve({json: data.json});
+        }
       }
     }
 
     window.addEventListener('message', resolver, false);
-    
-    //reject('timeout');
     window.parent.postMessage(msg, "*");
   });
 
