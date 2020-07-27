@@ -141,16 +141,7 @@ export class JsonEditorComponent implements OnInit {
       rules: currentQuery.rules,
     }
 
-    this.appbaseService
-      .updatequery(updatedQuery)
-      .then(function (res) {
-        console.log('Response: ', res);
-        alert('Query successfully saved to ES.');
-      })
-      .catch(function (error) {
-        console.error(error);
-        alert('Error while saving query to ES.');
-      });
+    this.appbaseService.updatequery(updatedQuery);//Fire and forget. RXB will notify user in case of failure.
   }
 
   setStream(validate) {
