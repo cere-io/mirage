@@ -220,18 +220,8 @@ export class AppbaseService {
       .put(this.requestParam.url + path, data, { headers: headers })
       .toPromise();
   }
-  puturl(url: string, data: any) {
-    let requestData = JSON.stringify(data);
-    let headersObj: any = {
-      "Content-Type": "application/json;charset=UTF-8"
-    };
-
-    if (this.requestParam.auth) {
-      headersObj.Authorization = this.requestParam.auth;
-    }
-
-    let headers = new Headers(headersObj);
-    return this.http.put(url, requestData, { headers: headers }).toPromise();
+  updatequery(query) {
+    return esRequest('PUT', '/updatequery', JSON.stringify(query));
   }
   delete(path: string) {
     let headersObj: any = {

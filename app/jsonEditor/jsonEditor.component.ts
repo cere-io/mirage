@@ -132,19 +132,19 @@ export class JsonEditorComponent implements OnInit {
       return;
     }
 
+    const updatedQuery = {
+      id: currentQuery.id,
+      name: currentQuery.name,
+      index_name: currentQuery.index_name,
+      query: JSON.parse(esQuery),
+      state: urlQueryParams.input_state,
+      rules: currentQuery.rules,
+    }
+
     this.appbaseService
-      .puturl(currentQuery.save_to + `/EE/runtime/RequestHandler.php?controller=RuntimeEngagementEventQueryController&action=update&async=true&id=${currentQuery.id}`, {
-        name: currentQuery.name,
-        index_name: currentQuery.index_name,
-        query: JSON.parse(esQuery),
-        state: urlQueryParams.input_state,
-        rules: currentQuery.rules,
-      })
+      .updatequery(updatedQuery)
       .then(function (res) {
         console.log('Response: ', res);
-        const targetWindow = window.parent;
-        targetWindow.postMessage({type: 'query.saved', payload:currentQuery.id}, "*");
-
         alert('Query successfully saved to ES.');
       })
       .catch(function (error) {
