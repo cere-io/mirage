@@ -22,8 +22,6 @@ const defaultQuery = {
   }
 };
 
-const proxyUrl = '/EE/admin/proxy_elastic_search.php?esUrl=';
-
 declare var $: any;
 
 @Component({
@@ -170,7 +168,6 @@ export class AppComponent implements OnInit, OnChanges {
     if (!isInputState && !!index_name) {
       config = this.defaultApp;
       config = {
-        url: save_to + proxyUrl,
         appname: index_name,
         save_to: save_to,
       }
@@ -181,7 +178,6 @@ export class AppComponent implements OnInit, OnChanges {
       this.urlShare.decryptUrl().then(data => {
         var decryptedData = data.data;
         if (decryptedData && decryptedData.config) {
-          decryptedData.config.url = save_to + proxyUrl;
           decryptedData.config.save_to = save_to;
           cb(decryptedData.config);
         } else {
@@ -405,7 +401,7 @@ export class AppComponent implements OnInit, OnChanges {
   }
 
   proxyFinalUrl() {
-    return this.config.host + proxyUrl + '/' + this.config.appname;
+    return '';
   }
 
   // get mappings
