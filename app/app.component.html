@@ -36,6 +36,7 @@
       #initEs="ngForm"
     >
       <div class="esContainer">
+        <!--
         <span class="action-btns">
           <share-url [urlShare]="urlShare"></share-url>
           <a
@@ -44,7 +45,7 @@
             (click)="viewData()"
             >Data View <i class="fa fa-external-link-square"></i
           ></a>
-        </span>
+        </span>-->
         <div class="form-group m-0 col-xs-4 pd-0 pr-5">
           <appselect
             (onAppSelectChange)="onAppSelectChange($event)"
@@ -56,15 +57,17 @@
         </div>
         <div class="form-group m-0 col-xs-8 pr-5">
           <div class="url-container form-element header-element">
+            <!--
             <input
               type="text"
               [(ngModel)]="config.url"
               required
               class="form-control"
               name="url"
-              [readonly]="connected ? true : false"
+              [readonly]="true"
               placeholder="ElasticSearch Cluster URL: https://username:password@scalr.api.appbase.io"
-            />
+            />-->
+            <!--
             <span
               class="hide-url"
               [ngClass]="{ expand: hide_url_flag, collapse: !hide_url_flag }"
@@ -73,9 +76,10 @@
                 <span [hidden]="hide_url_flag" class="fa fa-eye"></span>
                 <span [hidden]="!hide_url_flag" class="fa fa-eye-slash"></span>
               </a>
-            </span>
+            </span>-->
           </div>
         </div>
+        <!--
         <div class="submit-btn-container">
           <button
             [disabled]="!(initEs.form.valid && appSelected)"
@@ -90,7 +94,7 @@
               Disconnect
             </span>
           </button>
-        </div>
+        </div>-->
       </div>
     </form>
     <!-- APPLOGIN END -->
@@ -99,10 +103,11 @@
       <div class="row feature-query-container" [ngClass]="{ off: !sidebar }">
         <!-- Sidebar start -->
         <div class="features-section">
+          <!--
           <a (click)="sidebarToggle()" class="btn btn-default sidebar-toggle">
             <i class="fa fa-chevron-left sidebar-close"></i>
             <i class="fa fa-chevron-right sidebar-open"></i>
-          </a>
+          </a>-->
           <div class="feature-section-container col-xs-12 pd-0">
             <list-query
               [savedQueryList]="savedQueryList"

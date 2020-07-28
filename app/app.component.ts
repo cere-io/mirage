@@ -122,7 +122,17 @@ export class AppComponent implements OnInit, OnChanges {
       ? true
       : false;
     // get data from url
-    this.detectConfig(configCb.bind(this));
+    const index_name = this.queryParams.index_name;
+    const save_to = this.queryParams.save_to;
+
+    const current = {
+      id: this.queryParams.id,
+      index_name,
+      save_to: save_to,
+      name: this.queryParams.name,
+    };
+    this.storageService.set('currentquery', JSON.stringify(current));
+    this.detectConfig(configCb.bind(this), index_name, save_to);
     function configCb(config) {
       this.setInitialValue();
       this.getQueryList();
@@ -134,8 +144,8 @@ export class AppComponent implements OnInit, OnChanges {
         // $("#learnModal").modal("show");
         this.initial_connect = true;
       } else {
-        if (config && config.url && config.appname) {
-          this.setLocalConfig(config.url, config.appname);
+        if (config && config.url && config.appname && config.save_to) {
+          this.setLocalConfig(config.url, config.appname, save_to);
         }
         this.getLocalConfig();
       }
@@ -148,15 +158,19 @@ export class AppComponent implements OnInit, OnChanges {
   }
 
   // detect app config, either get it from url or apply default config
-  detectConfig(cb) {
+  detectConfig(cb, index_name, save_to) {
     let config = null;
     let isDefault =
       window.location.href.indexOf("#?default=true") > -1;
     let isInputState =
       window.location.href.indexOf("input_state=") > -1;
     let isApp = window.location.href.indexOf("app=") > -1;
-    if (isDefault) {
+    if (!isInputState && !!index_name) {
       config = this.defaultApp;
+      config = {
+        appname: index_name,
+        save_to: save_to,
+      }
       return cb(config);
     } else if (!isInputState && !isApp) {
       return cb("learn");
@@ -164,6 +178,7 @@ export class AppComponent implements OnInit, OnChanges {
       this.urlShare.decryptUrl().then(data => {
         var decryptedData = data.data;
         if (decryptedData && decryptedData.config) {
+          decryptedData.config.save_to = save_to;
           cb(decryptedData.config);
         } else {
           cb(null);
@@ -268,12 +283,13 @@ export class AppComponent implements OnInit, OnChanges {
   }
 
   //Set config from localstorage
-  setLocalConfig(url, appname) {
+  setLocalConfig(url, appname, save_to) {
     this.storageService.set("mirage-url", url);
     this.storageService.set("mirage-appname", appname);
     var obj = {
       appname: appname,
-      url: trimUrl(url)
+      url: trimUrl(url),
+      save_to: save_to,
     };
     var appsList = this.storageService.get("mirage-appsList");
     if (appsList) {
@@ -331,7 +347,7 @@ export class AppComponent implements OnInit, OnChanges {
     var self = this;
     var APPNAME = this.config.appname;
     var URL = trimUrl(this.config.url);
-    this.config.url = trimUrl(this.config.url);
+    this.config.url = URL;
     var filteredConfig = this.appbaseService.filterurl(URL);
     console.log(this.config, filteredConfig);
     if (!filteredConfig) {
@@ -340,6 +356,7 @@ export class AppComponent implements OnInit, OnChanges {
       this.config.username = filteredConfig.username;
       this.config.password = filteredConfig.password;
       this.config.host = filteredConfig.url;
+      this.config.save_to = filteredConfig.url;//todo
       this.appbaseService.setAppbase(this.config);
       this.getVersion();
       this.getMappings(clearFlag);
@@ -350,10 +367,10 @@ export class AppComponent implements OnInit, OnChanges {
   getVersion() {
     var self = this;
     this.appbaseService
-      .getVersion()
-      .then(function(res) {
+      .getVersion(self.config)
+      .then(function(res: any) {
         try {
-          let data = res.json();
+          let data = res.json;
           let source = data && data[self.config.appname];
           if (
             source &&
@@ -383,6 +400,10 @@ export class AppComponent implements OnInit, OnChanges {
       });
   }
 
+  proxyFinalUrl() {
+    return '';
+  }
+
   // get mappings
   getMappings(clearFlag) {
     var self = this;
@@ -393,10 +414,10 @@ export class AppComponent implements OnInit, OnChanges {
           self.config.host === "https://scalr.api.appbase.io" ? true : false;
         self.connected = true;
         self.setInitialValue();
-        self.finalUrl = self.config.host + "/" + self.config.appname;
+        self.finalUrl = self.proxyFinalUrl();
         self.mapping = data;
         self.types = self.seprateType(data);
-        self.setLocalConfig(self.config.url, self.config.appname);
+        self.setLocalConfig(self.config.url, self.config.appname, self.config.save_to);
         self.detectChange += "done";
 
         if (!clearFlag) {
@@ -419,9 +440,10 @@ export class AppComponent implements OnInit, OnChanges {
           if (decryptedData.result) {
             self.result = decryptedData.result;
           }
+          /*
           if (decryptedData.finalUrl) {
             self.finalUrl = decryptedData.finalUrl;
-          }
+          }*/
         }
 
         //set input state
@@ -445,9 +467,10 @@ export class AppComponent implements OnInit, OnChanges {
       .catch(function(e) {
         console.log(e);
         self.initial_connect = true;
+        const message = typeof(e) === 'string' ? e : e.message;
         self.errorShow({
-          title: "Authentication Error",
-          message: `It looks like your app name, username, password combination doesn\'t match. Check your url and appname and then connect it again.`
+          title: "Error",
+          message,
         });
       });
   }
@@ -489,7 +512,7 @@ export class AppComponent implements OnInit, OnChanges {
         this.appbaseService.get("/_mapping").then(
           function(res) {
             let data = res.json();
-            this.finalUrl = this.config.host + "/" + this.config.appname;
+            this.finalUrl = this.proxyFinalUrl();
             this.setInitialValue();
             this.connected = true;
             this.result = query.result;

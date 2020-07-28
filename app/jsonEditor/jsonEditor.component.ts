@@ -1,5 +1,6 @@
 import { Component, OnInit, Input, Output, EventEmitter } from "@angular/core";
 import { AppbaseService } from "../shared/appbase.service";
+import { StorageService } from "../shared/storage.service";
 import { UrlShare } from "../shared/urlShare";
 
 declare var $;
@@ -14,7 +15,7 @@ declare var $;
     "setProp",
     "errorShow"
   ],
-  providers: [AppbaseService]
+  providers: [AppbaseService, StorageService]
 })
 export class JsonEditorComponent implements OnInit {
   public config;
@@ -35,7 +36,7 @@ export class JsonEditorComponent implements OnInit {
   @Output() errorShow = new EventEmitter();
   @Input() allowF: any;
 
-  constructor(public appbaseService: AppbaseService) {}
+  constructor(public appbaseService: AppbaseService, public storageService: StorageService) {}
 
   // Set codemirror instead of normal textarea
   ngOnInit() {
@@ -73,12 +74,12 @@ export class JsonEditorComponent implements OnInit {
     if (validate.flag) {
       $("#resultModal").modal("show");
       this.appbaseService
-        .posturl(self.finalUrl, validate.payload)
-        .then(function(res) {
+        .sendquery(this.config.appname, validate.payload, this.config.save_to)
+        .then(function(res: any) {
           self.result.isWatching = false;
           var propInfo = {
             name: "result_time_taken",
-            value: res.json().took
+            value: res.json.took
           };
           self.setProp.emit(propInfo);
           var propInfo1 = {
@@ -86,7 +87,7 @@ export class JsonEditorComponent implements OnInit {
             value: Math.random()
           };
           self.setProp.emit(propInfo1);
-          self.result.output = JSON.stringify(res.json(), null, 2);
+          self.result.output = JSON.stringify(res.json, null, 2);
           if ($("#resultModal").hasClass("in")) {
             self.responseHookHelp.setValue(self.result.output);
           } else {
@@ -118,37 +119,20 @@ export class JsonEditorComponent implements OnInit {
   }
 
   saveQuery() {
+    const currentQuery = JSON.parse(this.storageService.get("currentquery"));
     const urlShare = new UrlShare();
     var esQuery = this.editorHookHelp.getValue();
     var urlQueryParams = urlShare.getQueryParameters(); // Get query param
 
     console.log('Query params: ', urlQueryParams);
 
-    if (!urlQueryParams.save_to) {
-      alert("Can't save the query, because `save_to` parameter was not provided.");
-
-      return;
+    const updatedQuery = {
+      id: currentQuery.id,
+      query: JSON.parse(esQuery),
+      state: urlQueryParams.input_state,
     }
 
-    this.appbaseService
-      .puturl(urlQueryParams.save_to + `/EE/runtime/RequestHandler.php?controller=RuntimeEngagementEventQueryController&action=update&async=true&id=${urlQueryParams.id}`, {
-        name: urlQueryParams.name,
-        index_name: urlQueryParams.index_name,
-        query: JSON.parse(esQuery),
-        state: urlQueryParams.input_state,
-        rules: JSON.parse(urlQueryParams.rules),
-      })
-      .then(function (res) {
-        console.log('Response: ', res);
-        const targetWindow = window.parent;
-        targetWindow.postMessage({type: 'query.saved', payload:urlQueryParams.id}, "*");
-
-        alert('Query successfully saved to ES.');
-      })
-      .catch(function (error) {
-        console.error(error);
-        alert('Error while saving query to ES.');
-      });
+    this.appbaseService.updatequery(updatedQuery, this.config.save_to);//Fire and forget. RXB will notify user in case of failure.
   }
 
   setStream(validate) {

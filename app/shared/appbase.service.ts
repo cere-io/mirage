@@ -1,6 +1,7 @@
 import { Injectable } from "@angular/core";
 import { Headers, Http } from "@angular/http";
 import "rxjs/add/operator/toPromise";
+import { esRequest } from "./proxyapi.service";
 declare var Appbase;
 
 function parse_url(url: string) {
@@ -56,6 +57,8 @@ export class AppbaseService {
   }
 
   setAppbase(config: any) {
+    this.config.appname = config.appname;
+    this.config.save_to = config.save_to;
     var parsedUrl = parse_url(config.url);
     this.config.username = parsedUrl.username;
     this.config.password = parsedUrl.password;
@@ -101,12 +104,12 @@ export class AppbaseService {
   getMappings() {
     var self = this;
     return new Promise((resolve, reject) => {
-      getRequest("/_mapping")
-        .then(function(res) {
-          let mappingData = res.json();
-          getRequest("/_alias")
-            .then(function(res) {
-              let aliasData = res.json();
+      esRequest('GET', `/${self.config.appname}/_mapping`,  undefined, self.config.save_to)
+        .then(function(res: any) {
+          let mappingData = res.json;
+          esRequest('GET', `/${self.config.appname}/_alias`, undefined, self.config.save_to)
+            .then(function(res: any) {
+              let aliasData = res.json;
               for (let index in aliasData) {
                 for (let alias in aliasData[index].aliases) {
                   mappingData[alias] = mappingData[index];
@@ -164,7 +167,7 @@ export class AppbaseService {
       return self.http.get(request_path, { headers: headers }).toPromise();
     }
   }
-  getVersion() {
+  getVersion(config) {
     let headersObj: any = {
       "Content-Type": "application/json;charset=UTF-8"
     };
@@ -178,9 +181,9 @@ export class AppbaseService {
       this.config.username + ":" + this.config.password + "@",
       ""
     );
-    var request_path = request_url + "/_settings";
+    var request_path = `/${config.appname}/_settings`;
     console.log(request_path);
-    return this.http.get(request_path, { headers: headers }).toPromise();
+    return esRequest('GET', request_path, undefined, config.save_to);
   }
   post(path: string, data: any) {
     let requestData = JSON.stringify(data);
@@ -199,18 +202,10 @@ export class AppbaseService {
       })
       .toPromise();
   }
-  posturl(url: string, data: any) {
+  sendquery(appname, data: any, save_to) {
     let requestData = JSON.stringify(data);
-    let headersObj: any = {
-      "Content-Type": "application/json;charset=UTF-8"
-    };
-
-    if (this.requestParam.auth) {
-      headersObj.Authorization = this.requestParam.auth;
-    }
-
-    let headers = new Headers(headersObj);
-    return this.http.post(url, requestData, { headers: headers }).toPromise();
+    var request_path = `/${appname}/_doc/_search`;
+    return esRequest('POST', request_path, requestData, save_to);
   }
   put(path: string, data: any) {
     let headersObj: any = {
@@ -226,18 +221,8 @@ export class AppbaseService {
       .put(this.requestParam.url + path, data, { headers: headers })
       .toPromise();
   }
-  puturl(url: string, data: any) {
-    let requestData = JSON.stringify(data);
-    let headersObj: any = {
-      "Content-Type": "application/json;charset=UTF-8"
-    };
-
-    if (this.requestParam.auth) {
-      headersObj.Authorization = this.requestParam.auth;
-    }
-
-    let headers = new Headers(headersObj);
-    return this.http.put(url, requestData, { headers: headers }).toPromise();
+  updatequery(query, save_to) {
+    return esRequest('PUT', '/updatequery', JSON.stringify(query), save_to);
   }
   delete(path: string) {
     let headersObj: any = {

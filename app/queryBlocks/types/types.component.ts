@@ -180,10 +180,10 @@ export class TypesComponent implements OnChanges {
     } else {
       var finalUrl = this.finalUrl.split("/");
       var lastUrl = "";
-      finalUrl[3] = this.config.appname;
-      if (finalUrl.length > 4) {
-        finalUrl[4] = selectedTypes.join(",");
-        finalUrl[5] = "_search";
+      finalUrl[6] = this.config.appname;
+      if (finalUrl.length > 7) {
+        finalUrl[7] = selectedTypes.join(",");
+        finalUrl[8] = "_search";
         lastUrl = finalUrl.join("/");
       } else {
         var typeJoin = "" + selectedTypes.join(",");

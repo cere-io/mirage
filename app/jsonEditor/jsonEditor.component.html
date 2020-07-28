@@ -1,4 +1,5 @@
 <div class="queryRight row">
+  <!--
   <div class="col-xs-12 pd-r0 rightRow url-row">
     <div class="form-group m-b15 form-element header-element">
       <input
@@ -9,7 +10,7 @@
           (keyup)="setPropIn()"
       />
     </div>
-  </div>
+  </div>-->
   <div class="col-xs-12 pd-r0 codeMirror-container">
     <div class="form-group">
       <textarea
@@ -23,6 +24,6 @@
   </div>
   <div class="run-row rightRow" [ngStyle]="{ bottom: getBottom() + 'px' }">
     <button class="btn btn-theme" (click)="runQuery()">Run Query</button>
-    <button class="btn btn-theme" (click)="saveQuery()">Save Query to Kibana</button>
+    <button class="btn btn-theme" (click)="saveQuery()">Save Query</button>
   </div>
 </div>
