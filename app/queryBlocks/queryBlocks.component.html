@@ -51,6 +51,7 @@
           </span>
         </div>
       </div>
+      <!--
       <span
         *ngIf="
           result.resultQuery.result.length >= 1 ||
@@ -65,7 +66,7 @@
         >
           Save State
         </button>
-      </span>
+      </span>-->
     </div>
     <form class="row m-0" *ngFor="let queryIn of result.resultQuery.result">
       <div *ngIf="queryIn.parent_id == 0">
