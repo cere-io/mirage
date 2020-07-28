@@ -4,4 +4,5 @@ export interface Config {
 	username: string;
 	password: string;
 	host: string;
+	save_to: string;
 }

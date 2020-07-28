@@ -49,7 +49,8 @@ export class AppComponent implements OnInit, OnChanges {
     appname: "",
     username: "",
     password: "",
-    host: ""
+    host: "",
+    save_to: "",
   };
   public savedQueryList: any = [];
   public query_info = {
