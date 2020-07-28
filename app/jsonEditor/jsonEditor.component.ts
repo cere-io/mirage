@@ -126,19 +126,10 @@ export class JsonEditorComponent implements OnInit {
 
     console.log('Query params: ', urlQueryParams);
 
-    if (!currentQuery.save_to) {
-      alert("Can't save the query, because `save_to` parameter was not provided.");
-
-      return;
-    }
-
     const updatedQuery = {
       id: currentQuery.id,
-      name: currentQuery.name,
-      index_name: currentQuery.index_name,
       query: JSON.parse(esQuery),
       state: urlQueryParams.input_state,
-      rules: currentQuery.rules,
     }
 
     this.appbaseService.updatequery(updatedQuery, this.config.save_to);//Fire and forget. RXB will notify user in case of failure.

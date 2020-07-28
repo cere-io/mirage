@@ -131,7 +131,6 @@ export class AppComponent implements OnInit, OnChanges {
       id: this.queryParams.id,
       index_name,
       save_to: save_to,
-      rules: JSON.parse(this.queryParams.rules),
       name: this.queryParams.name,
     };
     this.storageService.set('currentquery', JSON.stringify(current));
