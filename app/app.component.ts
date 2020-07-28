@@ -147,8 +147,8 @@ export class AppComponent implements OnInit, OnChanges {
         // $("#learnModal").modal("show");
         this.initial_connect = true;
       } else {
-        if (config && config.url && config.appname) {
-          this.setLocalConfig(config.url, config.appname);
+        if (config && config.url && config.appname && config.save_to) {
+          this.setLocalConfig(config.url, config.appname, save_to);
         }
         this.getLocalConfig();
       }
@@ -288,12 +288,13 @@ export class AppComponent implements OnInit, OnChanges {
   }
 
   //Set config from localstorage
-  setLocalConfig(url, appname) {
+  setLocalConfig(url, appname, save_to) {
     this.storageService.set("mirage-url", url);
     this.storageService.set("mirage-appname", appname);
     var obj = {
       appname: appname,
-      url: trimUrl(url)
+      url: trimUrl(url),
+      save_to: save_to,
     };
     var appsList = this.storageService.get("mirage-appsList");
     if (appsList) {
@@ -360,6 +361,7 @@ export class AppComponent implements OnInit, OnChanges {
       this.config.username = filteredConfig.username;
       this.config.password = filteredConfig.password;
       this.config.host = filteredConfig.url;
+      this.config.save_to = filteredConfig.url;//todo
       this.appbaseService.setAppbase(this.config);
       this.getVersion();
       this.getMappings(clearFlag);
@@ -420,7 +422,7 @@ export class AppComponent implements OnInit, OnChanges {
         self.finalUrl = self.proxyFinalUrl();
         self.mapping = data;
         self.types = self.seprateType(data);
-        self.setLocalConfig(self.config.url, self.config.appname);
+        self.setLocalConfig(self.config.url, self.config.appname, self.config.save_to);
         self.detectChange += "done";
 
         if (!clearFlag) {
