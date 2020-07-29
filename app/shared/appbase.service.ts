@@ -104,10 +104,10 @@ export class AppbaseService {
   getMappings() {
     var self = this;
     return new Promise((resolve, reject) => {
-      esRequest('GET', `/${self.config.appname}/_mapping`,  undefined, self.config.save_to)
+      esRequest('GET', `/${self.config.appname}/_mapping`,  undefined)
         .then(function(res: any) {
           let mappingData = res.json;
-          esRequest('GET', `/${self.config.appname}/_alias`, undefined, self.config.save_to)
+          esRequest('GET', `/${self.config.appname}/_alias`, undefined)
             .then(function(res: any) {
               let aliasData = res.json;
               for (let index in aliasData) {
@@ -183,7 +183,7 @@ export class AppbaseService {
     );
     var request_path = `/${config.appname}/_settings`;
     console.log(request_path);
-    return esRequest('GET', request_path, undefined, config.save_to);
+    return esRequest('GET', request_path, undefined);
   }
   post(path: string, data: any) {
     let requestData = JSON.stringify(data);
@@ -205,7 +205,7 @@ export class AppbaseService {
   sendquery(appname, data: any, save_to) {
     let requestData = JSON.stringify(data);
     var request_path = `/${appname}/_doc/_search`;
-    return esRequest('POST', request_path, requestData, save_to);
+    return esRequest('POST', request_path, requestData);
   }
   put(path: string, data: any) {
     let headersObj: any = {
@@ -222,7 +222,7 @@ export class AppbaseService {
       .toPromise();
   }
   updatequery(query, save_to) {
-    return esRequest('PUT', '/updatequery', JSON.stringify(query), save_to);
+    return esRequest('PUT', '/updatequery', JSON.stringify(query));
   }
   delete(path: string) {
     let headersObj: any = {
