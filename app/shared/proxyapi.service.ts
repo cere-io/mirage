@@ -1,4 +1,4 @@
-export function esRequest(method:string, esUrl:string, payload, save_to: string) {
+export function esRequest(method:string, esUrl:string, payload) {
   const msg = {
     rid: (new Date()).getTime(),
     type: 'es.api.request',
@@ -29,7 +29,7 @@ export function esRequest(method:string, esUrl:string, payload, save_to: string)
     setTimeout(timeout, 30000);
 
     window.addEventListener('message', resolver, false);
-    window.parent.postMessage(msg, save_to);
+    window.parent.postMessage(msg, "*");
   });
 
 }
