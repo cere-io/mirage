@@ -50,7 +50,6 @@ export class AppComponent implements OnInit, OnChanges {
     username: "",
     password: "",
     host: "",
-    save_to: "",
   };
   public savedQueryList: any = [];
   public query_info = {
@@ -124,32 +123,18 @@ export class AppComponent implements OnInit, OnChanges {
       : false;
     // get data from url
     const index_name = this.queryParams.index_name;
-    const save_to = this.queryParams.save_to;
 
     const current = {
       id: this.queryParams.id,
       index_name,
-      save_to: save_to,
       name: this.queryParams.name,
     };
     this.storageService.set('currentquery', JSON.stringify(current));
-    this.detectConfig(configCb.bind(this), index_name, save_to);
+    this.detectConfig(configCb.bind(this), index_name);
     function configCb(config) {
-      this.setInitialValue();
-      this.getQueryList();
-      this.getAppsList();
-      if (this.BRANCH === "master") {
-        this.EsSpecific();
-      }
-      if (config && config === "learn") {
-        // $("#learnModal").modal("show");
-        this.initial_connect = true;
-      } else {
-        if (config && config.url && config.appname && config.save_to) {
-          this.setLocalConfig(config.url, config.appname, save_to);
-        }
-        this.getLocalConfig();
-      }
+      this.config.url = config.url;
+      this.config.appname = config.appname;
+      this.connect(false); 
     }
   }
 
@@ -159,7 +144,7 @@ export class AppComponent implements OnInit, OnChanges {
   }
 
   // detect app config, either get it from url or apply default config
-  detectConfig(cb, index_name, save_to) {
+  detectConfig(cb, index_name) {
     let config = null;
     let isDefault =
       window.location.href.indexOf("#?default=true") > -1;
@@ -170,7 +155,7 @@ export class AppComponent implements OnInit, OnChanges {
       config = this.defaultApp;
       config = {
         appname: index_name,
-        save_to: save_to,
+        url: window.location.href,
       }
       return cb(config);
     } else if (!isInputState && !isApp) {
@@ -179,7 +164,7 @@ export class AppComponent implements OnInit, OnChanges {
       this.urlShare.decryptUrl().then(data => {
         var decryptedData = data.data;
         if (decryptedData && decryptedData.config) {
-          decryptedData.config.save_to = save_to;
+          decryptedData.config.url = window.location.href;
           cb(decryptedData.config);
         } else {
           cb(null);
@@ -245,20 +230,6 @@ export class AppComponent implements OnInit, OnChanges {
       });
   }
 
-  //Get config from localstorage
-  getLocalConfig() {
-    var url = this.storageService.get("mirage-url");
-    var appname = this.storageService.get("mirage-appname");
-    this.getAppsList();
-    if (url != null) {
-      this.config.url = url;
-      this.config.appname = appname;
-      this.connect(false);
-    } else {
-      this.initial_connect = true;
-    }
-  }
-
   // get appsList from storage
   getAppsList() {
     var appsList = this.storageService.get("mirage-appsList");
@@ -283,32 +254,6 @@ export class AppComponent implements OnInit, OnChanges {
     } catch (e) {}
   }
 
-  //Set config from localstorage
-  setLocalConfig(url, appname, save_to) {
-    this.storageService.set("mirage-url", url);
-    this.storageService.set("mirage-appname", appname);
-    var obj = {
-      appname: appname,
-      url: trimUrl(url),
-      save_to: save_to,
-    };
-    var appsList = this.storageService.get("mirage-appsList");
-    if (appsList) {
-      try {
-        this.appsList = JSON.parse(appsList);
-      } catch (e) {
-        this.appsList = [];
-      }
-    }
-    if (this.appsList.length) {
-      this.appsList = this.appsList.filter(function(app) {
-        return app.appname !== appname;
-      });
-    }
-    this.appsList.push(obj);
-    this.storageService.set("mirage-appsList", JSON.stringify(this.appsList));
-  }
-
   setInitialValue() {
     this.mapping = null;
     this.types = [];
@@ -325,16 +270,6 @@ export class AppComponent implements OnInit, OnChanges {
     };
   }
 
-  connectHandle() {
-    if (this.connected) {
-      this.initial_connect = true;
-      this.connected = false;
-      this.urlShare.inputs = {};
-      this.urlShare.createUrl();
-    } else {
-      this.connect(true);
-    }
-  }
   hideUrl() {
     this.hide_url_flag = this.hide_url_flag ? false : true;
   }
@@ -357,7 +292,6 @@ export class AppComponent implements OnInit, OnChanges {
       this.config.username = filteredConfig.username;
       this.config.password = filteredConfig.password;
       this.config.host = filteredConfig.url;
-      this.config.save_to = filteredConfig.url;//todo
       this.appbaseService.setAppbase(this.config);
       this.getVersion();
       this.getMappings(clearFlag);
@@ -418,7 +352,6 @@ export class AppComponent implements OnInit, OnChanges {
         self.finalUrl = self.proxyFinalUrl();
         self.mapping = data;
         self.types = self.seprateType(data);
-        self.setLocalConfig(self.config.url, self.config.appname, self.config.save_to);
         self.detectChange += "done";
 
         if (!clearFlag) {

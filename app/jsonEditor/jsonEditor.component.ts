@@ -74,7 +74,7 @@ export class JsonEditorComponent implements OnInit {
     if (validate.flag) {
       $("#resultModal").modal("show");
       this.appbaseService
-        .sendquery(this.config.appname, validate.payload, this.config.save_to)
+        .sendquery(this.config.appname, validate.payload)
         .then(function(res: any) {
           self.result.isWatching = false;
           var propInfo = {
@@ -132,7 +132,7 @@ export class JsonEditorComponent implements OnInit {
       state: urlQueryParams.input_state,
     }
 
-    this.appbaseService.updatequery(updatedQuery, this.config.save_to);//Fire and forget. RXB will notify user in case of failure.
+    this.appbaseService.updatequery(updatedQuery);//Fire and forget. RXB will notify user in case of failure.
   }
 
   setStream(validate) {
