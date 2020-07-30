@@ -50,7 +50,6 @@ export class AppComponent implements OnInit, OnChanges {
     username: "",
     password: "",
     host: "",
-    save_to: "",
   };
   public savedQueryList: any = [];
   public query_info = {
@@ -124,16 +123,14 @@ export class AppComponent implements OnInit, OnChanges {
       : false;
     // get data from url
     const index_name = this.queryParams.index_name;
-    const save_to = this.queryParams.save_to;
 
     const current = {
       id: this.queryParams.id,
       index_name,
-      save_to: save_to,
       name: this.queryParams.name,
     };
     this.storageService.set('currentquery', JSON.stringify(current));
-    this.detectConfig(configCb.bind(this), index_name, save_to);
+    this.detectConfig(configCb.bind(this), index_name);
     function configCb(config) {
       this.config.url = config.url;
       this.config.appname = config.appname;
@@ -147,7 +144,7 @@ export class AppComponent implements OnInit, OnChanges {
   }
 
   // detect app config, either get it from url or apply default config
-  detectConfig(cb, index_name, save_to) {
+  detectConfig(cb, index_name) {
     let config = null;
     let isDefault =
       window.location.href.indexOf("#?default=true") > -1;
@@ -158,7 +155,6 @@ export class AppComponent implements OnInit, OnChanges {
       config = this.defaultApp;
       config = {
         appname: index_name,
-        save_to: save_to,
         url: window.location.href,
       }
       return cb(config);
@@ -168,7 +164,6 @@ export class AppComponent implements OnInit, OnChanges {
       this.urlShare.decryptUrl().then(data => {
         var decryptedData = data.data;
         if (decryptedData && decryptedData.config) {
-          decryptedData.config.save_to = save_to;
           decryptedData.config.url = window.location.href;
           cb(decryptedData.config);
         } else {
@@ -297,7 +292,6 @@ export class AppComponent implements OnInit, OnChanges {
       this.config.username = filteredConfig.username;
       this.config.password = filteredConfig.password;
       this.config.host = filteredConfig.url;
-      this.config.save_to = filteredConfig.url;//todo
       this.appbaseService.setAppbase(this.config);
       this.getVersion();
       this.getMappings(clearFlag);

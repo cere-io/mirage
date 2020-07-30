@@ -58,7 +58,6 @@ export class AppbaseService {
 
   setAppbase(config: any) {
     this.config.appname = config.appname;
-    this.config.save_to = config.save_to;
     var parsedUrl = parse_url(config.url);
     this.config.username = parsedUrl.username;
     this.config.password = parsedUrl.password;
@@ -202,7 +201,7 @@ export class AppbaseService {
       })
       .toPromise();
   }
-  sendquery(appname, data: any, save_to) {
+  sendquery(appname, data: any) {
     let requestData = JSON.stringify(data);
     var request_path = `/${appname}/_doc/_search`;
     return esRequest('POST', request_path, requestData);
@@ -221,7 +220,7 @@ export class AppbaseService {
       .put(this.requestParam.url + path, data, { headers: headers })
       .toPromise();
   }
-  updatequery(query, save_to) {
+  updatequery(query) {
     return esRequest('PUT', '/updatequery', JSON.stringify(query));
   }
   delete(path: string) {
